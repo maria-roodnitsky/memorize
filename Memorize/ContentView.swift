@@ -7,57 +7,101 @@
 
 import SwiftUI
 
+let flowerEmojis = ["💐","🌼","🌸","🌷","🌺","🌻","🌹","💮", "🌱", "🌳"]
+let dartmouthEmojis = ["🌲","🍾","🍷","📚","📘","🥂","🍻","🏓"]
+let californiaEmojis = ["☀️","🏄🏼‍♀️","🏝","🌉","👩‍💻","📱","🌁","😎", "🏖"]
+
 
 struct ContentView: View {
-    let emojis = ["🌲", "🙂", "🥰", "😇", "🌺"]
-    @State var emojiCount = 4
+    
+    @State var emojis = flowerEmojis
+    @State var themeColor = Color.purple
     
     var body: some View {
         VStack {
             ScrollView {
+                Text("Memorize")
+                    .bold()
+                    .foregroundColor(.black)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 70))]) {
-                    ForEach(emojis[0..<emojiCount], id: \.self) { emoji in
+                    ForEach(emojis, id: \.self) { emoji in
                         CardView(content: emoji)
                             .aspectRatio(2/3, contentMode: .fit)
                     }
                 }
             }
-            .foregroundColor(.red)
+            .foregroundColor(themeColor)
             Spacer()
             HStack{
-                deleteButton
+                dartmouthButton
                 Spacer()
-                addButton
+                flowerButton
+                Spacer()
+                californiaButton
             }
         }
-        .padding(.horizontal)
+        .padding()
         .font(.largeTitle)
     }
     
-    var addButton: some View {
-        Button(action: {
-            if emojiCount < emojis.count {
-            emojiCount += 1
-            }
-        }, label: {
-                Image(systemName: "plus.circle")
-            })
+    var dartmouthButton: some View {
+        VStack{
+        Button(action:
+                {
+                    emojis = shuffle(cards: dartmouthEmojis)
+                    themeColor = Color.green
+                },
+               label: {
+                Image.init(systemName: "sparkle")
+               })
+        Text("Dartmouth")
+                    .font(.footnote)
+        }
     }
     
-    var deleteButton: some View {
-        Button(action: {
-            if emojiCount > 1 {
-            emojiCount -= 1
-            }
-            
-        }, label: {
-                Image(systemName: "minus.circle")
-            })
+    var flowerButton: some View {
+        VStack{
+        Button(action:
+                {
+                    emojis = shuffle(cards: flowerEmojis)
+                    themeColor = Color.purple
+                },
+               label: {
+                Image.init(systemName: "leaf")
+               })
+        Text("Flowers")
+                .font(.footnote)
+        }
+    }
+    
+    var californiaButton: some View {
+        VStack{
+        Button(action:
+                {
+                    emojis = shuffle(cards: californiaEmojis)
+                    themeColor = Color.blue
+                },
+               label: {
+                Image.init(systemName: "sun.max.fill")
+               })
+            Text("California")
+                .font(.footnote)
+        }
+    }
+    
+    func shuffle(cards: Array<String>) -> Array<String> {
+        var shuffledCards = cards
+        
+        for i in 0..<cards.count {
+            let randomIndex = Int.random(in: 0..<cards.count)
+            shuffledCards.swapAt(i, randomIndex)
+        }
+        
+        return shuffledCards
     }
 }
-
-
-
 
 struct CardView: View {
     let content: String
