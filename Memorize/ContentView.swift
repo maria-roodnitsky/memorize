@@ -7,9 +7,11 @@
 
 import SwiftUI
 
-let flowerEmojis = ["💐","🌼","🌸","🌷","🌺","🌻","🌹","💮", "🌱", "🌳"]
-let dartmouthEmojis = ["🌲","🍾","🍷","📚","📘","🥂","🍻","🏓"]
-let californiaEmojis = ["☀️","🏄🏼‍♀️","🏝","🌉","👩‍💻","📱","🌁","😎", "🏖"]
+let BUTTON_HEIGHT: CGFloat = 65.0
+
+var flowerEmojis = ["💐","🌼","🌸","🌷","🌺","🌻","🌹","💮", "🌱", "🌳"]
+var dartmouthEmojis = ["🌲","🍾","🍷","📚","📘","🥂","🍻","🏓"]
+var californiaEmojis = ["☀️","🏄🏼‍♀️","🏝","🌉","👩‍💻","📱","🌁","😎", "🏖"]
 
 
 struct ContentView: View {
@@ -24,7 +26,6 @@ struct ContentView: View {
                     .bold()
                     .foregroundColor(.black)
                     .frame(maxWidth: .infinity, alignment: .topLeading)
-                    
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 70))]) {
                     ForEach(emojis, id: \.self) { emoji in
                         CardView(content: emoji)
@@ -34,7 +35,7 @@ struct ContentView: View {
             }
             .foregroundColor(themeColor)
             Spacer()
-            HStack{
+            HStack {
                 dartmouthButton
                 Spacer()
                 flowerButton
@@ -48,58 +49,61 @@ struct ContentView: View {
     
     var dartmouthButton: some View {
         VStack{
-        Button(action:
+            Button(action:
                 {
-                    emojis = shuffle(cards: dartmouthEmojis)
+                    emojis = dartmouthEmojis.shuffled()
                     themeColor = Color.green
                 },
-               label: {
+                   label: {
                 Image.init(systemName: "sparkle")
                })
-        Text("Dartmouth")
-                    .font(.footnote)
+            Spacer()
+            Text("Dartmouth")
+                .font(.footnote)
+                .foregroundColor(.blue)
         }
+        .frame(height: BUTTON_HEIGHT)
+        .padding()
     }
     
     var flowerButton: some View {
         VStack{
         Button(action:
                 {
-                    emojis = shuffle(cards: flowerEmojis)
+                    emojis = flowerEmojis.shuffled()
                     themeColor = Color.purple
                 },
                label: {
                 Image.init(systemName: "leaf")
                })
-        Text("Flowers")
+            Spacer()
+            Text("Flowers")
                 .font(.footnote)
+                .foregroundColor(.blue)
         }
+        .frame(height: BUTTON_HEIGHT)
+        .padding()
+
     }
     
     var californiaButton: some View {
         VStack{
         Button(action:
                 {
-                    emojis = shuffle(cards: californiaEmojis)
+                    emojis = californiaEmojis.shuffled()
                     themeColor = Color.blue
                 },
                label: {
                 Image.init(systemName: "sun.max.fill")
                })
+            Spacer()
             Text("California")
                 .font(.footnote)
+                .foregroundColor(.blue)
         }
-    }
-    
-    func shuffle(cards: Array<String>) -> Array<String> {
-        var shuffledCards = cards
-        
-        for i in 0..<cards.count {
-            let randomIndex = Int.random(in: 0..<cards.count)
-            shuffledCards.swapAt(i, randomIndex)
-        }
-        
-        return shuffledCards
+        .frame(height: BUTTON_HEIGHT)
+        .padding()
+
     }
 }
 
@@ -122,9 +126,6 @@ struct CardView: View {
         }
     }
 }
-
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
