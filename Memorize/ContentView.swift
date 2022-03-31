@@ -21,15 +21,22 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            ScrollView {
-                Text("Memorize")
-                    .bold()
-                    .foregroundColor(.black)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 70))]) {
-                    ForEach(emojis, id: \.self) { emoji in
-                        CardView(content: emoji)
-                            .aspectRatio(2/3, contentMode: .fit)
+            GeometryReader { geometry in
+                let numberOfCards = Int.random(in: 4...emojis.count) // select random number of cards
+                let preferredWidth = getPreferredWidth(height: geometry.size.height, width: geometry.size.width, nCards: numberOfCards) // calculate a good width for the number of cards
+                
+                ScrollView {
+                    Text("Memorize")
+                        .bold()
+                        .foregroundColor(.black)
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                    // the preferred maximum is an upper bound, adaptive picks a good size given a range
+                    // so we select from a range of (preferredWidth - 60, preferredWidth - 30)
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: preferredWidth - 60, maximum: preferredWidth - 30))]) {
+                        ForEach(emojis[0..<numberOfCards], id: \.self) { emoji in
+                            CardView(content: emoji)
+                                .aspectRatio(2/3, contentMode: .fit)
+                        }
                     }
                 }
             }
@@ -104,6 +111,16 @@ struct ContentView: View {
         .frame(height: BUTTON_HEIGHT)
         .padding()
 
+    }
+    
+    func getPreferredWidth(height: CGFloat, width: CGFloat, nCards: Int) -> CGFloat {
+        let totalArea = height * width
+        let cardArea = totalArea / CGFloat(nCards)
+        
+        // math (2x * 3x = cardArea) -> solve for x -> return 2x
+        let cardWidth = (cardArea / 6.0).squareRoot() * 2.0
+        
+        return cardWidth
     }
 }
 
