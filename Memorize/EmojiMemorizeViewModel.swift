@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class EmojiMemorizeViewModel {
+class EmojiMemorizeViewModel: ObservableObject {
     
     // static functions are private to the view model
     static let emojis =  ["💐","🌼","🌸","🌷","🌺","🌻","🌹","💮", "🌱", "🌳"]
@@ -18,9 +18,13 @@ class EmojiMemorizeViewModel {
         }
     }
     
-    private var model = createEmojiMemorizeModel()
+    @Published private var model = createEmojiMemorizeModel()
     
     var cards: Array<EmojiMemorizeModel<String>.Card> {
         return model.cards
+    }
+    
+    func choose(_ card: EmojiMemorizeModel<String>.Card) {
+        model.choose(card)
     }
 }

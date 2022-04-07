@@ -18,6 +18,7 @@ struct ContentView: View {
     
     @State var emojis = flowerEmojis
     @State var themeColor = Color.purple
+    @ObservedObject var viewModel: EmojiMemorizeViewModel
     
     var body: some View {
         VStack {
@@ -33,21 +34,16 @@ struct ContentView: View {
                     // the preferred maximum is an upper bound, adaptive picks a good size given a range
                     // so we select from a range of (preferredWidth - 60, preferredWidth - 30)
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: preferredWidth - 60, maximum: preferredWidth - 30))]) {
-                        ForEach(emojis[0..<numberOfCards], id: \.self) { emoji in
-                            CardView(content: emoji)
+                        ForEach(viewModel.cards) { card in
+                            CardView(card: card)
                                 .aspectRatio(2/3, contentMode: .fit)
+                                .onTapGesture {
+                                    viewModel.choose(card)
+                                }
                         }
                     }
                 }
-            }
-            .foregroundColor(themeColor)
-            Spacer()
-            HStack {
-                dartmouthButton
-                Spacer()
-                flowerButton
-                Spacer()
-                californiaButton
+                .foregroundColor(themeColor)
             }
         }
         .padding()
@@ -125,27 +121,27 @@ struct ContentView: View {
 }
 
 struct CardView: View {
-    let content: String
-    @State var isFaceUp = true
+    let card: EmojiMemorizeModel<String>.Card
     
     var body: some View {
         ZStack{
             let cardShape = RoundedRectangle(cornerRadius: 20)
-            if isFaceUp {
+            if card.isFaceUp {
                 cardShape.foregroundColor(.white)
                 cardShape.strokeBorder(lineWidth: 3)
-                Text(content)
+                Text(card.content)
+            } else if card.isMatched {
+                cardShape.opacity(0)
             } else {
                 cardShape.fill()
             }
-        }.onTapGesture {
-            isFaceUp = !isFaceUp
         }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let viewModel = EmojiMemorizeViewModel()
+        ContentView(viewModel: viewModel)
     }
 }
