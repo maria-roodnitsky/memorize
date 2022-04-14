@@ -9,31 +9,22 @@ import SwiftUI
 
 let BUTTON_HEIGHT: CGFloat = 65.0
 
-var flowerEmojis = ["💐","🌼","🌸","🌷","🌺","🌻","🌹","💮", "🌱", "🌳"]
-var dartmouthEmojis = ["🌲","🍾","🍷","📚","📘","🥂","🍻","🏓"]
-var californiaEmojis = ["☀️","🏄🏼‍♀️","🏝","🌉","👩‍💻","📱","🌁","😎", "🏖"]
-
-
 struct ContentView: View {
-    
-    @State var emojis = flowerEmojis
-    @State var themeColor = Color.purple
+
     @ObservedObject var viewModel: EmojiMemorizeViewModel
     
     var body: some View {
         VStack {
-            GeometryReader { geometry in
-                let numberOfCards = Int.random(in: 4...emojis.count) // select random number of cards
-                let preferredWidth = getPreferredWidth(height: geometry.size.height, width: geometry.size.width, nCards: numberOfCards) // calculate a good width for the number of cards
-                
                 ScrollView {
                     Text("Memorize")
                         .bold()
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                    // the preferred maximum is an upper bound, adaptive picks a good size given a range
-                    // so we select from a range of (preferredWidth - 60, preferredWidth - 30)
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: preferredWidth - 60, maximum: preferredWidth - 30))]) {
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    HStack{
+                        Text(viewModel.theme.name)
+                        Spacer()
+                        Text("Score: \(viewModel.score)")
+                    }
+                    LazyVGrid(columns: [GridItem(), GridItem(), GridItem()]) {
                         ForEach(viewModel.cards) { card in
                             CardView(card: card)
                                 .aspectRatio(2/3, contentMode: .fit)
@@ -42,81 +33,17 @@ struct ContentView: View {
                                 }
                         }
                     }
-                }
-                .foregroundColor(themeColor)
+                    .foregroundColor(viewModel.theme.color)
             }
+            newGameButton
         }
         .padding()
         .font(.largeTitle)
     }
-    
-    var dartmouthButton: some View {
-        VStack{
-            Button(action:
-                {
-                    emojis = dartmouthEmojis.shuffled()
-                    themeColor = Color.green
-                },
-                   label: {
-                Image.init(systemName: "sparkle")
-               })
-            Spacer()
-            Text("Dartmouth")
-                .font(.footnote)
-                .foregroundColor(.blue)
-        }
-        .frame(height: BUTTON_HEIGHT)
-        .padding()
-    }
-    
-    var flowerButton: some View {
-        VStack{
-        Button(action:
-                {
-                    emojis = flowerEmojis.shuffled()
-                    themeColor = Color.purple
-                },
-               label: {
-                Image.init(systemName: "leaf")
-               })
-            Spacer()
-            Text("Flowers")
-                .font(.footnote)
-                .foregroundColor(.blue)
-        }
-        .frame(height: BUTTON_HEIGHT)
-        .padding()
 
-    }
-    
-    var californiaButton: some View {
-        VStack{
-        Button(action:
-                {
-                    emojis = californiaEmojis.shuffled()
-                    themeColor = Color.blue
-                },
-               label: {
-                Image.init(systemName: "sun.max.fill")
-               })
-            Spacer()
-            Text("California")
-                .font(.footnote)
-                .foregroundColor(.blue)
-        }
-        .frame(height: BUTTON_HEIGHT)
-        .padding()
-
-    }
-    
-    func getPreferredWidth(height: CGFloat, width: CGFloat, nCards: Int) -> CGFloat {
-        let totalArea = height * width
-        let cardArea = totalArea / CGFloat(nCards)
         
-        // math (2x * 3x = cardArea) -> solve for x -> return 2x
-        let cardWidth = (cardArea / 6.0).squareRoot() * 2.0
-        
-        return cardWidth
+    var newGameButton: some View {
+        Button(action: { viewModel.newGame() }, label: { Text("New Game") })
     }
 }
 
