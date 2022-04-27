@@ -10,7 +10,7 @@ import SwiftUI
 class EmojiMemorizeViewModel: ObservableObject {
     
     // static functions are private to the view model
-        static var themeArray = [EmojiMemorizeModel<String>.Theme(name: "California", emojiArray: Array(Set(["☀️","🏄🏼‍♀️","🏝","🌉","👩‍💻","📱","🌁","😎", "🏖"])), numberOfCardPairs: 5, color: Color.blue),
+        private static var themeArray = [EmojiMemorizeModel<String>.Theme(name: "California", emojiArray: Array(Set(["☀️","🏄🏼‍♀️","🏝","🌉","👩‍💻","📱","🌁","😎", "🏖"])), numberOfCardPairs: 5, color: Color.blue),
                              EmojiMemorizeModel<String>.Theme(name: "Dartmouth", emojiArray: Array(Set(["🌲","🍾","🍷","📚","📘","🥂","🍻","🏓"])), numberOfCardPairs: 6, color: Color.green),
                              EmojiMemorizeModel<String>.Theme(name: "Flowers", emojiArray: Array(Set(["💐","🌼","🌸","🌷","🌺","🌻","🌹","💮", "🌱", "🌳"])), numberOfCardPairs: 11, color: Color.pink),
                              EmojiMemorizeModel<String>.Theme(name: "One", emojiArray: Array(Set(["🌳"])), numberOfCardPairs: 10, color: Color.black),
@@ -20,7 +20,7 @@ class EmojiMemorizeViewModel: ObservableObject {
         ]
     
         
-    static func createEmojiMemorizeModel(themeIndex: Int) -> EmojiMemorizeModel<String> {
+    private static func createEmojiMemorizeModel(themeIndex: Int) -> EmojiMemorizeModel<String> {
         EmojiMemorizeModel<String>(numberOfPairsOfCards: themeArray[themeIndex].numberOfCardPairs, numberOfEmojis: themeArray[themeIndex].emojiArray.count, themeIndex: themeIndex) { pairIndex in
             if (pairIndex < themeArray[themeIndex].emojiArray.count) {
                 return themeArray[themeIndex].emojiArray[pairIndex]

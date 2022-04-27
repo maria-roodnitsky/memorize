@@ -11,7 +11,11 @@ import SwiftUI
 struct EmojiMemorizeModel<CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>
     private(set) var themeIndex: Int
-    private var indexOfFaceUpCard: Int?
+    private var indexOfFaceUpCard: Int? {
+        get { cards.indices.filter( {cards[$0].isFaceUp}).oneAndOnly }
+        set { cards.indices.forEach {cards[$0].isFaceUp = ($0 == newValue)} }
+    }
+    
     private(set) var score: Int = 0
     
     
@@ -19,25 +23,21 @@ struct EmojiMemorizeModel<CardContent> where CardContent: Equatable {
         if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}),
            !cards[chosenIndex].isFaceUp,
            !cards[chosenIndex].isMatched {
-            if let potentialMatchIndex = indexOfFaceUpCard {
-                if cards[chosenIndex].content == cards[potentialMatchIndex].content {
-                    cards[chosenIndex].isMatched = true
-                    cards[potentialMatchIndex].isMatched = true
-                    score += 2
+                if let potentialMatchIndex = indexOfFaceUpCard {
+                    if cards[chosenIndex].content == cards[potentialMatchIndex].content {
+                        cards[chosenIndex].isMatched = true
+                        cards[potentialMatchIndex].isMatched = true
+                        score += 2
+                    } else {
+                        if (cards[chosenIndex].seen) { score -= 1}
+                        if (cards[potentialMatchIndex].seen) { score -= 1}
+                    }
+                    cards[chosenIndex].seen = true
+                    cards[potentialMatchIndex].seen = true
+                    cards[chosenIndex].isFaceUp = true
                 } else {
-                    if (cards[chosenIndex].seen) { score -= 1}
-                    if (cards[potentialMatchIndex].seen) { score -= 1}
+                    indexOfFaceUpCard = chosenIndex
                 }
-                indexOfFaceUpCard = nil
-                cards[chosenIndex].seen = true
-                cards[potentialMatchIndex].seen = true
-            } else {
-                for index in cards.indices {
-                    cards[index].isFaceUp = false
-                }
-                indexOfFaceUpCard = chosenIndex
-            }
-            cards[chosenIndex].isFaceUp.toggle()
         }
     }
     
@@ -46,7 +46,7 @@ struct EmojiMemorizeModel<CardContent> where CardContent: Equatable {
     }
     
     init(numberOfPairsOfCards: Int, numberOfEmojis: Int, themeIndex: Int, createCardContent: (Int) -> CardContent?) {
-        cards = Array<Card>()
+        cards = []
         self.themeIndex = themeIndex
         var randomOrder = Array(0..<numberOfEmojis)
         randomOrder.shuffle()
@@ -71,8 +71,8 @@ struct EmojiMemorizeModel<CardContent> where CardContent: Equatable {
         var isFaceUp = false
         var isMatched = false
         var seen = false
-        var content: CardContent
-        var id: Int
+        let content: CardContent
+        let id: Int
     }
     
     struct Theme {
@@ -80,5 +80,15 @@ struct EmojiMemorizeModel<CardContent> where CardContent: Equatable {
         var emojiArray: Array<String>
         var numberOfCardPairs: Int
         var color: Color
+    }
+}
+
+extension Array {
+    var oneAndOnly: Element? {
+        if count == 1 {
+            return first
+        } else {
+            return nil
+        }
     }
 }
