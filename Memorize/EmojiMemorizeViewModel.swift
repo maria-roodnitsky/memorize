@@ -44,10 +44,15 @@ class EmojiMemorizeViewModel: ObservableObject {
         return model.score
     }
     
+    // MARK - Intents 
+    
     func choose(_ card: EmojiMemorizeModel<String>.Card) {
         model.choose(card)
     }
-        
+    
+    func shuffle() {
+        model.shuffle()
+    }
     
     func newGame() {
         model.chooseNewTheme(numberOfThemes: EmojiMemorizeViewModel.themeArray.count)

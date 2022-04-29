@@ -50,6 +50,7 @@ struct AspectVGrid<Item, ItemView>: View where ItemView: View, Item: Identifiabl
             columnCount += 1
             rowCount = (itemCount + (columnCount - 1)) / columnCount
         } while columnCount < itemCount
+        
         if columnCount > itemCount {
             columnCount = itemCount
         }
@@ -57,8 +58,3 @@ struct AspectVGrid<Item, ItemView>: View where ItemView: View, Item: Identifiabl
     }
 }
 
-//struct AspectVGrid_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AspectVGrid()
-//    }
-//}
